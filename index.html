@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vaccinator Resource Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f3f6f5; --surface: #ffffff; --surface-2: #e8eeec; --ink: #12302d; --ink-soft: #4b6461;
+  --line: #d3dedb; --accent: #0a7466; --accent-ink: #ffffff; --accent-soft: #d6ece8;
+  --band: #12302d; --band-ink: #e9f3f1; --band-soft: #9fbdb8;
+  --warn: #b5651d; --warn-soft: #f8e7d6; --danger: #b3261e; --danger-soft: #f9dedc; --ok: #2e7d32;
+  --font-display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1716; --surface: #13211f; --surface-2: #1a2c29; --ink: #e2eeeb; --ink-soft: #9db5b0;
+    --line: #2a3f3b; --accent: #3fb8a5; --accent-ink: #062320; --accent-soft: #173b36;
+    --band: #091110; --band-ink: #e2eeeb; --band-soft: #85a6a0;
+    --warn: #e6a15c; --warn-soft: #3a2a1a; --danger: #f2948c; --danger-soft: #3d1d1b; --ok: #81c784;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+img { max-width: 100%; }
+
+.top { position: sticky; top: 0; z-index: 5; background: var(--band); color: var(--band-ink); padding-top: env(safe-area-inset-top, 0px); }
+.top .wrap { display: flex; align-items: center; gap: 12px 24px; flex-wrap: wrap; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; min-width: 0; }
+.brand h1 { font-size: 20px; font-weight: 700; color: var(--band-ink); }
+.brand p { margin: 0; font-size: 12px; color: var(--band-soft); font-family: var(--font-mono); }
+.tabs { display: flex; gap: 4px; background: rgba(255,255,255,0.07); padding: 4px; border-radius: 999px; }
+.tabs button { border: 0; background: transparent; color: var(--band-soft); padding: 7px 16px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.tabs button:hover { color: var(--band-ink); }
+.tabs button[aria-selected="true"] { background: var(--band-ink); color: var(--band); }
+.who { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--band-soft); }
+.who button { background: transparent; border: 1px solid var(--band-soft); color: var(--band-ink); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 13px; }
+
+main { padding-block: 28px 64px; }
+.notice { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 14px 18px; color: var(--ink-soft); }
+.notice.warn { border-color: var(--warn); background: var(--warn-soft); color: var(--ink); }
+
+/* Sign in */
+.auth { max-width: 420px; margin: 48px auto; }
+.auth .panel { gap: 16px; }
+.auth h2 { font-size: 24px; }
+.auth .switch { font-size: 14px; color: var(--ink-soft); }
+.auth .switch button { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; text-decoration: underline; }
+.msg-ok { color: var(--ok); font-size: 14px; margin: 0; }
+
+/* Library */
+.lib { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 32px; align-items: start; }
+.rail { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 2px; }
+.rail h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); font-family: var(--font-body); font-weight: 600; margin-bottom: 8px; }
+.rail button { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; text-align: left; border: 0; background: transparent; padding: 7px 10px; border-radius: 8px; cursor: pointer; color: var(--ink); }
+.rail button:hover { background: var(--surface-2); }
+.rail button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.rail .count { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.searchbar { display: flex; gap: 10px; margin-bottom: 18px; }
+.searchbar input { flex: 1; min-width: 0; padding: 11px 14px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); }
+.listhead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.listhead h2 { font-size: 22px; }
+.listhead span { color: var(--ink-soft); font-size: 13px; }
+.items { display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.item { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 14px; align-items: start; padding: 16px 4px; border-bottom: 1px solid var(--line); }
+.badge { font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-align: center; padding: 6px 0; border-radius: 6px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); }
+.badge.pdf { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.badge.link { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.item h3 { font-size: 17px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.item p { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; max-width: 65ch; overflow-wrap: anywhere; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.meta .cat { color: var(--accent); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 7px 13px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.danger { color: var(--danger); }
+.btn.danger.armed { background: var(--danger); color: var(--surface); border-color: var(--danger); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.empty { padding: 40px 20px; text-align: center; color: var(--ink-soft); border: 1px dashed var(--line); border-radius: var(--radius); background: var(--surface); }
+.empty h3 { color: var(--ink); font-size: 18px; margin-bottom: 6px; }
+
+/* Ask */
+.chat { max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+.chathead { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+.chathead h2 { font-size: 26px; }
+.chathead p { margin: 4px 0 0; color: var(--ink-soft); max-width: 60ch; }
+.log { display: flex; flex-direction: column; gap: 16px; }
+.msg.user { align-self: flex-end; background: var(--accent); color: var(--accent-ink); padding: 10px 15px; border-radius: 16px 16px 4px 16px; max-width: 85%; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.bot { background: var(--surface); border: 1px solid var(--line); padding: 14px 18px; border-radius: 4px 16px 16px 16px; overflow-wrap: anywhere; }
+.msg.bot p { margin: 0 0 10px; }
+.msg.bot p:last-child, .msg.bot ul:last-child, .msg.bot ol:last-child { margin-bottom: 0; }
+.msg.bot ul, .msg.bot ol { margin: 0 0 10px; padding-left: 22px; }
+.msg.bot h4 { font-family: var(--font-display); font-size: 16px; margin: 12px 0 6px; }
+.cite { display: inline-flex; font-family: var(--font-mono); font-size: 11.5px; background: var(--accent-soft); color: var(--accent); padding: 1px 7px; border-radius: 999px; text-decoration: none; white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis; vertical-align: 1px; }
+.status { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+.status::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 8px; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .status::before { animation: none; } }
+.err { color: var(--danger); font-size: 14px; }
+.suggest { display: flex; flex-wrap: wrap; gap: 8px; }
+.suggest button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 14px; text-align: left; }
+.suggest button:hover { border-color: var(--accent); color: var(--accent); }
+.composer { position: sticky; bottom: 0; padding-block: 12px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(transparent, var(--bg) 30%); }
+.composer form { display: flex; gap: 10px; align-items: end; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 8px 8px 14px; }
+.composer textarea { flex: 1; min-width: 0; border: 0; background: transparent; resize: none; padding: 6px 0; max-height: 160px; outline: none; }
+.composer form:focus-within { border-color: var(--accent); }
+.scope { font-size: 13px; color: var(--ink-soft); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.scope select { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 3px 6px; max-width: 100%; }
+
+/* Manage */
+.manage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.panel h2 { font-size: 19px; }
+.panel .hint { margin: -8px 0 0; color: var(--ink-soft); font-size: 13px; }
+.full-row { grid-column: 1 / -1; }
+label.field { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+label.field input, label.field select, label.field textarea { font-weight: 400; color: var(--ink); padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.drop { border: 2px dashed var(--line); border-radius: var(--radius); padding: 26px 16px; text-align: center; color: var(--ink-soft); cursor: pointer; background: var(--bg); }
+.drop.over { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.drop strong { color: var(--ink); display: block; font-size: 15px; margin-bottom: 2px; }
+.queue { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.queue div { display: flex; justify-content: space-between; gap: 10px; padding: 6px 10px; background: var(--bg); border-radius: 6px; }
+.queue span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.queue .ok { color: var(--ok); } .queue .bad { color: var(--danger); }
+.erow { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.erow input, .erow select { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); min-width: 0; }
+.erow .desc { grid-column: 1 / 3; }
+.erow .actions { grid-row: 1 / 3; grid-column: 3; flex-direction: column; align-items: stretch; }
+.erow .sub { grid-column: 1 / 3; font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-soft); }
+
+/* Training */
+.tr-head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 20px; }
+.tr-head h2 { font-size: 26px; }
+.tr-head p { margin: 4px 0 0; color: var(--ink-soft); max-width: 62ch; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.trsum { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); margin: -8px 0 16px; }
+.mods { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 16px; }
+.mod { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.mod.open { cursor: pointer; }
+.mod.open:hover { border-color: var(--accent); }
+.mod.locked { opacity: 0.6; }
+.mod h3 { font-size: 18px; line-height: 1.3; overflow-wrap: anywhere; }
+.mod p { margin: 0; color: var(--ink-soft); font-size: 14px; overflow-wrap: anywhere; }
+.mod .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mod .foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+.pill { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; background: var(--surface-2); color: var(--ink-soft); }
+.pill.done { background: var(--accent); color: var(--accent-ink); }
+.pill.prog { background: var(--accent-soft); color: var(--accent); }
+.bar { height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.4s ease; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+.small { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.track { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-direction: column; max-width: 780px; }
+.step { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; position: relative; padding-bottom: 22px; }
+.step::before { content: ""; position: absolute; left: 16px; top: 36px; bottom: 2px; width: 2px; background: var(--line); }
+.step:last-child::before { display: none; }
+.step.done::before { background: var(--accent); }
+.dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; border: 2px solid var(--line); background: var(--surface); color: var(--ink-soft); }
+.step.done .dot { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.step.current .dot { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.step.locked h3 { color: var(--ink-soft); }
+.step .shead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; padding-top: 5px; }
+.step h3 { font-size: 16px; font-weight: 600; }
+.kind { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); }
+.sbody { margin-top: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sbody .instr { white-space: pre-wrap; margin: 0; max-width: 65ch; overflow-wrap: anywhere; }
+.sbody .actions { justify-content: flex-start; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opts label { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--bg); }
+.opts label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.opts input { margin-top: 4px; }
+.check { display: flex; gap: 10px; align-items: center; cursor: pointer; }
+.feedback { font-size: 14px; color: var(--warn); margin: 0; }
+.complete-card { margin-top: 18px; max-width: 780px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; background: var(--accent-soft); border-radius: var(--radius); padding: 16px 18px; }
+.complete-card strong { display: block; font-family: var(--font-display); font-size: 18px; color: var(--accent); }
+.sedits { display: flex; flex-direction: column; gap: 12px; }
+.sedit { border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; background: var(--bg); }
+.sedit .full { grid-column: 1 / -1; }
+.sedit .shd { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sedit label.field input, .sedit label.field select, .sedit label.field textarea { background: var(--surface); }
+.iconbtn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 3px 9px; cursor: pointer; font-size: 13px; }
+.iconbtn:hover { border-color: var(--accent); }
+.tablewrap { overflow-x: auto; }
+.team { border-collapse: collapse; width: 100%; font-size: 14px; }
+.team th, .team td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.team th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); font-weight: 600; }
+.team td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.team .yes { color: var(--accent); font-weight: 600; }
+.team select { padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+
+@media (max-width: 820px) {
+  .sedit { grid-template-columns: minmax(0, 1fr); }
+  .lib { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .rail { position: static; flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
+  .rail h2 { display: none; }
+  .rail button { flex: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; }
+  .manage { grid-template-columns: minmax(0, 1fr); }
+  .erow { grid-template-columns: minmax(0, 1fr); }
+  .erow .desc, .erow .sub { grid-column: auto; }
+  .erow .actions { grid-row: auto; grid-column: auto; flex-direction: row; justify-content: flex-start; }
+}
+@media (max-width: 560px) {
+  .item { grid-template-columns: 44px minmax(0, 1fr); }
+  .item .actions { grid-column: 2; justify-content: flex-start; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; padding: 7px 6px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="11" y="3" width="12" height="5" rx="1.5" fill="var(--warn)"/>
+        <rect x="12.5" y="8" width="9" height="3" fill="var(--band-soft)"/>
+        <rect x="9" y="11" width="16" height="20" rx="3" fill="none" stroke="var(--band-ink)" stroke-width="2"/>
+        <rect x="11" y="19" width="12" height="10" rx="1.5" fill="var(--accent)"/>
+      </svg>
+      <div>
+        <h1>Vaccinator Resource Hub</h1>
+        <p>Documents · Training · Job aids</p>
+      </div>
+    </div>
+    <div class="who" id="who" hidden><span id="who-name"></span><button type="button" id="sign-out">Sign out</button></div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Sections" hidden>
+      <button role="tab" id="tab-library" data-view="library" aria-selected="true">Library</button>
+      <button role="tab" id="tab-training" data-view="training" aria-selected="false">Training</button>
+      <button role="tab" id="tab-ask" data-view="ask" aria-selected="false">Ask</button>
+      <button role="tab" id="tab-manage" data-view="manage" aria-selected="false" hidden>Manage</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner" class="notice" hidden style="margin-bottom:20px"></div>
+
+  <!-- Sign in / create account / reset password -->
+  <section id="view-auth" hidden>
+    <div class="auth">
+      <form class="panel" id="auth-form">
+        <h2 id="auth-title">Sign in</h2>
+        <label class="field" for="au-name" id="au-name-wrap" hidden>Full name<input id="au-name" autocomplete="name"></label>
+        <label class="field" for="au-email" id="au-email-wrap">Email<input id="au-email" type="email" autocomplete="email" required></label>
+        <label class="field" for="au-pass" id="au-pass-wrap">Password<input id="au-pass" type="password" autocomplete="current-password" minlength="6"></label>
+        <p class="err" id="au-err" hidden></p>
+        <p class="msg-ok" id="au-ok" hidden></p>
+        <button class="btn primary" type="submit" id="au-submit">Sign in</button>
+        <div class="switch" id="au-switch"></div>
+      </form>
+    </div>
+  </section>
+
+  <section id="view-library" role="tabpanel" hidden>
+    <div class="lib">
+      <aside class="rail" id="rail" aria-label="Categories"></aside>
+      <div>
+        <div class="searchbar"><input id="q" type="search" placeholder="Search titles and descriptions" aria-label="Search the library"></div>
+        <div class="listhead"><h2 id="list-title">All resources</h2><span id="list-count"></span></div>
+        <div class="items" id="items"></div>
+        <div class="empty" id="lib-empty" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-training" role="tabpanel" hidden>
+    <div id="training-root"></div>
+  </section>
+
+  <section id="view-ask" role="tabpanel" hidden>
+    <div class="chat">
+      <div class="chathead">
+        <div>
+          <h2>Ask the library</h2>
+          <p>Answers come from the PDFs and text files in this hub, with page references you can open. Always confirm doses and schedules against the source page.</p>
+        </div>
+        <button class="btn" id="new-chat" type="button">New chat</button>
+      </div>
+      <div class="log" id="log" aria-live="polite"></div>
+      <div class="suggest" id="suggest"></div>
+      <div class="composer">
+        <div class="scope"><label for="scope-sel">Search in</label><select id="scope-sel"><option value="">All documents</option></select></div>
+        <form id="ask-form">
+          <textarea id="ask-input" rows="1" placeholder="Ask about schedules, cold chain, AEFI, technique…" aria-label="Your question"></textarea>
+          <button class="btn primary" id="ask-btn" type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-manage" role="tabpanel" hidden>
+    <div class="manage">
+      <div class="panel">
+        <h2>Upload documents</h2>
+        <p class="hint">Any file up to 50 MB. The assistant can read PDFs and text files. Save Word and PowerPoint files as PDF if you want the assistant to search them.</p>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files to upload">
+          <strong>Drop files here</strong>or click to choose
+          <input type="file" id="file-input" multiple hidden>
+        </div>
+        <div class="queue" id="queue"></div>
+        <label class="field" for="up-cat">Category<input id="up-cat" list="cat-list" placeholder="Choose or type a category"></label>
+        <label class="field" for="up-desc">Description (optional)<textarea id="up-desc" rows="2" placeholder="What this covers and who it's for"></textarea></label>
+        <button class="btn primary" id="up-btn" type="button" disabled>Upload</button>
+      </div>
+      <div class="panel">
+        <h2>Add a web link</h2>
+        <p class="hint">For resources hosted elsewhere, like a ministry or WHO page or an online course.</p>
+        <form id="link-form" style="display:flex;flex-direction:column;gap:14px">
+          <label class="field" for="ln-title">Title<input id="ln-title" required placeholder="e.g. WHO Immunization in Practice"></label>
+          <label class="field" for="ln-url">Address<input id="ln-url" type="url" required placeholder="https://"></label>
+          <label class="field" for="ln-cat">Category<input id="ln-cat" list="cat-list" placeholder="Choose or type a category"></label>
+          <label class="field" for="ln-desc">Description (optional)<textarea id="ln-desc" rows="2"></textarea></label>
+          <button class="btn primary" type="submit">Add link</button>
+        </form>
+      </div>
+      <div class="panel full-row">
+        <h2>Edit the directory</h2>
+        <p class="hint">Rename, recategorize, replace a file with a newer version, or remove it.</p>
+        <div id="edit-rows"></div>
+      </div>
+      <div class="panel full-row">
+        <h2>People</h2>
+        <p class="hint">Everyone who has created an account. Editors can upload, edit the directory and build training modules.</p>
+        <div class="tablewrap" id="people"></div>
+      </div>
+    </div>
+    <datalist id="cat-list"></datalist>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(() => {
+  const CATEGORIES = [
+    "Immunization schedules", "Vaccine information sheets", "Cold chain & storage",
+    "Administration technique", "Adverse events (AEFI)", "Training materials",
+    "Job aids & checklists", "Forms & reporting", "Policies & guidelines"
+  ];
+  const SUGGESTIONS = [
+    "What should I do if the vaccine carrier temperature goes above 8 °C?",
+    "Summarize the steps for reporting and managing an AEFI",
+    "Which documents cover the routine immunization schedule?",
+    "What are the contraindications listed for measles-rubella vaccine?"
+  ];
+  const EXT_TYPES = {
+    pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp",
+    mp4: "video/mp4", webm: "video/webm", txt: "text/plain", md: "text/markdown", csv: "text/csv", json: "application/json",
+    doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  };
+  const MAX_BYTES = 50 * 1024 * 1024;
+  const BUCKET = "resources";
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+  function banner(msg, warn) {
+    const b = $("banner");
+    b.hidden = !msg; b.className = "notice" + (warn ? " warn" : ""); b.textContent = msg || "";
+  }
+  function flash(msg) { banner(msg, true); setTimeout(() => banner(""), 7000); }
+
+  const cfg = window.HUB_CONFIG || {};
+  if (!window.supabase || !cfg.SUPABASE_URL || cfg.SUPABASE_URL.includes("YOUR-PROJECT")) {
+    banner("This hub isn't connected yet. Open config.js and paste your Supabase project address and key (see README step 6).", true);
+    return;
+  }
+  const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+
+  const S = {
+    user: null, me: null, isEditor: false, started: false,
+    resources: [], urls: {}, urlsAt: 0, cat: "All", q: "", turns: [], pending: [], people: []
+  };
+  const T = { modules: [], progress: { done: {}, modules_done: {} }, all: [], open: null, editing: null, loaded: false };
+
+  /* ---------- views ---------- */
+  const VIEWS = ["library", "training", "ask", "manage"];
+  function show(view) {
+    $("view-auth").hidden = true;
+    if (!VIEWS.includes(view) || $("tab-" + view).hidden) view = "library";
+    for (const v of VIEWS) {
+      $("view-" + v).hidden = v !== view;
+      $("tab-" + v).setAttribute("aria-selected", String(v === view));
+    }
+    try { history.replaceState(null, "", "#" + view); } catch {}
+  }
+  document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => show(b.dataset.view)));
+
+  /* ---------- auth ---------- */
+  let authMode = "signin";
+  function showAuth(mode) {
+    authMode = mode || "signin";
+    for (const v of VIEWS) $("view-" + v).hidden = true;
+    $("tabs").hidden = true; $("who").hidden = true;
+    $("view-auth").hidden = false;
+    const titles = { signin: "Sign in", signup: "Create your account", forgot: "Reset your password", reset: "Choose a new password" };
+    $("auth-title").textContent = titles[authMode];
+    $("au-submit").textContent = { signin: "Sign in", signup: "Create account", forgot: "Send reset link", reset: "Save new password" }[authMode];
+    $("au-name-wrap").hidden = authMode !== "signup";
+    $("au-email-wrap").hidden = authMode === "reset";
+    $("au-email").required = authMode !== "reset";
+    $("au-pass-wrap").hidden = authMode === "forgot";
+    $("au-pass").required = authMode !== "forgot";
+    $("au-pass").autocomplete = authMode === "signin" ? "current-password" : "new-password";
+    $("au-err").hidden = true; $("au-ok").hidden = true;
+    const sw = $("au-switch");
+    sw.innerHTML = authMode === "signin"
+      ? `New here? <button type="button" data-m="signup">Create an account</button> · <button type="button" data-m="forgot">Forgot password?</button>`
+      : authMode === "reset" ? "" : `Already have an account? <button type="button" data-m="signin">Sign in</button>`;
+    sw.querySelectorAll("button").forEach((b) => b.onclick = () => showAuth(b.dataset.m));
+  }
+  $("auth-form").onsubmit = async (e) => {
+    e.preventDefault();
+    const err = $("au-err"), ok = $("au-ok"), btn = $("au-submit");
+    err.hidden = true; ok.hidden = true; btn.disabled = true;
+    const email = $("au-email").value.trim(), password = $("au-pass").value;
+    let res;
+    try {
+      if (authMode === "signin") res = await sb.auth.signInWithPassword({ email, password });
+      else if (authMode === "signup") {
+        res = await sb.auth.signUp({ email, password, options: { data: { full_name: $("au-name").value.trim() }, emailRedirectTo: location.origin + location.pathname } });
+        if (!res.error && !res.data.session) { ok.hidden = false; ok.textContent = "Check your email and click the confirmation link, then sign in."; }
+      } else if (authMode === "forgot") {
+        res = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+        if (!res.error) { ok.hidden = false; ok.textContent = "If that email has an account, a reset link is on its way."; }
+      } else {
+        res = await sb.auth.updateUser({ password });
+        if (!res.error) { history.replaceState(null, "", location.pathname); startApp(res.data.user); }
+      }
+      if (res.error) { err.hidden = false; err.textContent = res.error.message; }
+    } finally { btn.disabled = false; }
+  };
+  $("sign-out").onclick = async () => { await sb.auth.signOut(); location.hash = ""; location.reload(); };
+
+  sb.auth.onAuthStateChange((event, session) => {
+    // Supabase advises not to await other calls inside this callback.
+    setTimeout(() => {
+      if (event === "PASSWORD_RECOVERY") return showAuth("reset");
+      if (session?.user) { if (!S.started) startApp(session.user); }
+      else if (event !== "TOKEN_REFRESHED") { S.started = false; showAuth("signin"); }
+    }, 0);
+  });
+
+  async function startApp(user) {
+    if (S.started) return;
+    S.started = true;
+    S.user = user;
+    let { data: me } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    if (!me) { await new Promise((r) => setTimeout(r, 800)); ({ data: me } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle()); }
+    S.me = me || { full_name: "", role: "vaccinator" };
+    S.isEditor = S.me.role === "editor";
+    $("who-name").textContent = S.me.full_name || user.email;
+    $("who").hidden = false; $("tabs").hidden = false;
+    $("tab-manage").hidden = !S.isEditor;
+    S.turns = (store.get("vh-chat") || []).filter((t) => t && t.content);
+    show((location.hash || "").slice(1) || "library");
+    renderChat();
+    await Promise.all([loadResources(), loadModules(), loadProgress()]);
+    if (S.isEditor) { loadTeam(); loadPeople(); }
+  }
+
+  /* ---------- data ---------- */
+  async function loadResources() {
+    const { data, error } = await sb.from("resources").select("*").order("added_at", { ascending: false });
+    if (error) { flash("The library couldn't load. Reload the page to try again."); return; }
+    S.resources = data || [];
+    await signUrls(true);
+    S.loaded = true;
+    renderLibrary(); renderManage(); renderScope(); renderTraining();
+  }
+  async function signUrls(force) {
+    if (!force && Date.now() - S.urlsAt < 4 * 3600e3) return;
+    const paths = S.resources.filter((r) => r.storage_path).map((r) => r.storage_path);
+    S.urls = {};
+    if (paths.length) {
+      const { data } = await sb.storage.from(BUCKET).createSignedUrls(paths, 6 * 3600);
+      for (const d of data || []) if (d.signedUrl) S.urls[d.path] = d.signedUrl;
+    }
+    S.urlsAt = Date.now();
+  }
+  async function loadModules() {
+    const { data } = await sb.from("modules").select("*").order("sort_order");
+    T.modules = data || []; T.loaded = true;
+    renderTraining();
+  }
+  async function loadProgress() {
+    const { data } = await sb.from("progress").select("*").eq("user_id", S.user.id).maybeSingle();
+    T.progress = data || { done: {}, modules_done: {} };
+    renderTraining();
+  }
+  async function loadTeam() {
+    const [{ data: prog }, { data: ppl }] = await Promise.all([sb.from("progress").select("*"), sb.from("profiles").select("id,full_name,email,role,created_at").order("created_at")]);
+    T.all = prog || []; S.people = ppl || [];
+    renderTeam(); renderPeople();
+  }
+  const loadPeople = loadTeam;
+
+  /* ---------- helpers ---------- */
+  const byId = (id) => S.resources.find((r) => r.id === id);
+  const kindOf = (r) => r.kind === "link" ? "LINK"
+    : r.content_type === "application/pdf" ? "PDF"
+    : (r.content_type || "").startsWith("image/") ? "IMG"
+    : (r.content_type || "").startsWith("video/") ? "VIDEO"
+    : (r.content_type || "").startsWith("text/") ? "TEXT" : "FILE";
+  const hrefOf = (r, page) => r.kind === "link" ? r.url
+    : (S.urls[r.storage_path] || "#") + (page && r.content_type === "application/pdf" ? "#page=" + page : "");
+  const fmtSize = (b) => !b ? "" : b > 1048576 ? (b / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB";
+  const fmtDate = (iso) => { try { return iso ? new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : ""; } catch { return ""; } };
+  const titleFromFile = (name) => name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  const typeOf = (f) => f.type || EXT_TYPES[(f.name.split(".").pop() || "").toLowerCase()] || "application/octet-stream";
+  const safeName = (n) => n.normalize("NFKD").replace(/[^\w.\-]+/g, "_").slice(-120) || "file";
+  const openLink = (r, page, label, cls) => {
+    const a = document.createElement("a");
+    a.className = cls || "btn"; a.href = hrefOf(r, page); a.target = "_blank"; a.rel = "noopener"; a.textContent = label;
+    return a;
+  };
+
+  /* ---------- library ---------- */
+  function renderLibrary() {
+    const counts = {};
+    for (const r of S.resources) counts[r.category || "Uncategorized"] = (counts[r.category || "Uncategorized"] || 0) + 1;
+    const cats = [...new Set([...CATEGORIES.filter((c) => counts[c]), ...Object.keys(counts).sort()])];
+    if (S.cat !== "All" && !counts[S.cat]) S.cat = "All";
+    const rail = $("rail");
+    rail.innerHTML = "<h2>Categories</h2>";
+    const mk = (label, n) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.setAttribute("aria-pressed", String(S.cat === label));
+      b.innerHTML = `<span>${esc(label === "All" ? "All resources" : label)}</span><span class="count">${n}</span>`;
+      b.onclick = () => { S.cat = label; renderLibrary(); };
+      rail.appendChild(b);
+    };
+    mk("All", S.resources.length);
+    cats.forEach((c) => mk(c, counts[c]));
+
+    const q = S.q.trim().toLowerCase();
+    const list = S.resources.filter((r) =>
+      (S.cat === "All" || (r.category || "Uncategorized") === S.cat) &&
+      (!q || [r.title, r.description, r.category, r.file_name].join(" ").toLowerCase().includes(q)));
+    $("list-title").textContent = S.cat === "All" ? "All resources" : S.cat;
+    $("list-count").textContent = S.loaded ? `${list.length} item${list.length === 1 ? "" : "s"}` : "";
+    const items = $("items");
+    items.innerHTML = S.loaded ? "" : `<div class="empty"><p>Loading the library…</p></div>`;
+    for (const r of list) {
+      const k = kindOf(r);
+      const el = document.createElement("article");
+      el.className = "item";
+      let host = "";
+      if (r.kind === "link") { try { host = new URL(r.url).hostname; } catch {} }
+      const meta = [
+        `<span class="cat">${esc(r.category || "Uncategorized")}</span>`,
+        r.page_count ? `<span>${r.page_count} pp</span>` : "",
+        r.size_bytes ? `<span>${fmtSize(r.size_bytes)}</span>` : "",
+        host ? `<span>${esc(host)}</span>` : "",
+        `<span>${r.updated_at ? "Updated " + fmtDate(r.updated_at) : "Added " + fmtDate(r.added_at)}</span>`,
+        r.content_type === "application/pdf" && !r.has_text ? `<span style="color:var(--warn)">No readable text (scanned?)</span>` : ""
+      ].filter(Boolean).join("");
+      el.innerHTML = `
+        <div class="badge ${k.toLowerCase()}">${k}</div>
+        <div style="min-width:0"><h3>${esc(r.title)}</h3>${r.description ? `<p>${esc(r.description)}</p>` : ""}<div class="meta">${meta}</div></div>
+        <div class="actions"></div>`;
+      const acts = el.querySelector(".actions");
+      acts.appendChild(openLink(r, null, r.kind === "link" ? "Visit" : "Open"));
+      if (r.has_text) {
+        const ask = document.createElement("button");
+        ask.className = "btn"; ask.type = "button"; ask.textContent = "Ask about this";
+        ask.onclick = () => { $("scope-sel").value = r.id; show("ask"); $("ask-input").value = `Summarize the key points of "${r.title}" that a vaccinator needs in the field.`; autosize(); $("ask-input").focus(); };
+        acts.appendChild(ask);
+      }
+      items.appendChild(el);
+    }
+    const empty = $("lib-empty");
+    empty.hidden = list.length > 0 || !S.loaded;
+    empty.innerHTML = !S.resources.length
+      ? `<h3>The library is empty</h3><p>Protocols, training slides, vaccine information sheets and job aids will appear here once an editor uploads them.</p>`
+      : `<h3>Nothing matches</h3><p>Try a different word or pick another category.</p>`;
+  }
+  $("q").addEventListener("input", (e) => { S.q = e.target.value; renderLibrary(); });
+  // Signed file links expire after 6 hours; refresh them when someone returns to the tab.
+  document.addEventListener("visibilitychange", async () => {
+    if (document.visibilityState === "visible" && S.loaded && Date.now() - S.urlsAt > 4 * 3600e3) { await signUrls(true); renderLibrary(); }
+  });
+
+  /* ---------- text extraction ---------- */
+  let pdfReady = null;
+  function loadScript(src) {
+    return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src)); document.head.appendChild(s); });
+  }
+  function loadPdfJs() {
+    const base = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+    pdfReady ||= loadScript(base + "pdf.min.js").then(() => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = base + "pdf.worker.min.js";
+      return window.pdfjsLib;
+    });
+    return pdfReady;
+  }
+  async function extractPdf(file, onPage) {
+    const pdfjs = await loadPdfJs();
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise;
+    const pages = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      onPage(i, doc.numPages);
+      const tc = await (await doc.getPage(i)).getTextContent();
+      let t = "";
+      for (const it of tc.items) t += (it.str || "") + (it.hasEOL ? "\n" : " ");
+      pages.push({ p: i, t: t.replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").replace(/\u0000/g, "").trim() });
+    }
+    return { pages, numPages: doc.numPages };
+  }
+  function chunkText(text) {
+    const pages = []; let p = 1;
+    for (let i = 0; i < text.length; i += 4000) pages.push({ p: p++, t: text.slice(i, i + 4000) });
+    return pages;
+  }
+  async function readText(file, type, note) {
+    if (type === "application/pdf") return extractPdf(file, (i, n) => note(`Reading page ${i} of ${n}`));
+    if (type.startsWith("text/") || type === "application/json") return { pages: chunkText((await file.text()).replace(/\u0000/g, "")), numPages: null };
+    return { pages: [], numPages: null };
+  }
+  async function writePages(resId, pages) {
+    const rows = pages.filter((p) => p.t).map((p) => ({ resource_id: resId, page: p.p, content: p.t }));
+    for (let i = 0; i < rows.length; i += 100) {
+      const { error } = await sb.from("resource_pages").insert(rows.slice(i, i + 100));
+      if (error) throw error;
+    }
+  }
+  async function uploadFile(file, note) {
+    if (file.size > MAX_BYTES) throw new Error("Over 50 MB. Compress it or split it into parts.");
+    const type = typeOf(file);
+    const { pages, numPages } = await readText(file, type, note);
+    note("Uploading…");
+    const path = `${crypto.randomUUID()}/${safeName(file.name)}`;
+    const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: type, upsert: false });
+    if (error) throw error;
+    const chars = pages.reduce((a, p) => a + p.t.length, 0);
+    return { type, pages, numPages, path, hasText: chars > 40 };
+  }
+
+  /* ---------- manage ---------- */
+  function setQueue() {
+    $("queue").innerHTML = S.pending.map((p) =>
+      `<div><span>${esc(p.file.name)}</span><span class="${p.cls || ""}">${esc(p.status || fmtSize(p.file.size))}</span></div>`).join("");
+    $("up-btn").disabled = !S.pending.some((p) => !p.done);
+  }
+  function addFiles(files) { for (const f of files) S.pending.push({ file: f }); setQueue(); }
+  const drop = $("drop");
+  drop.onclick = () => $("file-input").click();
+  drop.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("file-input").click(); } };
+  $("file-input").onchange = (e) => { addFiles(e.target.files); e.target.value = ""; };
+  drop.ondragover = (e) => { e.preventDefault(); drop.classList.add("over"); };
+  drop.ondragleave = () => drop.classList.remove("over");
+  drop.ondrop = (e) => { e.preventDefault(); drop.classList.remove("over"); addFiles(e.dataTransfer.files); };
+
+  $("up-btn").onclick = async () => {
+    $("up-btn").disabled = true;
+    const category = $("up-cat").value.trim() || "Uncategorized";
+    const description = $("up-desc").value.trim();
+    for (const p of S.pending) {
+      if (p.done) continue;
+      const note = (s) => { p.status = s; p.cls = ""; setQueue(); };
+      try {
+        const up = await uploadFile(p.file, note);
+        note("Indexing…");
+        const { data: row, error } = await sb.from("resources").insert({
+          title: titleFromFile(p.file.name), file_name: p.file.name, category, description, kind: "file",
+          storage_path: up.path, content_type: up.type, size_bytes: p.file.size, page_count: up.numPages, has_text: up.hasText
+        }).select().single();
+        if (error) throw error;
+        await writePages(row.id, up.pages);
+        p.done = true; p.cls = "ok";
+        p.status = up.type === "application/pdf" && !up.hasText ? "Added (no text found)" : "Added";
+      } catch (e) {
+        p.done = true; p.cls = "bad"; p.status = e.message || "Upload failed";
+      }
+      setQueue();
+    }
+    await loadResources();
+    setTimeout(() => { S.pending = S.pending.filter((p) => !p.done); setQueue(); }, 6000);
+  };
+
+  $("link-form").onsubmit = async (e) => {
+    e.preventDefault();
+    const url = $("ln-url").value.trim();
+    try { const u = new URL(url); if (!/^https?:$/.test(u.protocol)) throw 0; } catch { $("ln-url").setCustomValidity("Enter a full web address starting with https://"); $("ln-url").reportValidity(); return; }
+    const { error } = await sb.from("resources").insert({
+      title: $("ln-title").value.trim(), url, kind: "link",
+      category: $("ln-cat").value.trim() || "Uncategorized", description: $("ln-desc").value.trim()
+    });
+    if (error) return flash("The link couldn't be added: " + error.message);
+    e.target.reset();
+    loadResources();
+  };
+  $("ln-url").oninput = (e) => e.target.setCustomValidity("");
+
+  function renderManage() {
+    $("cat-list").innerHTML = [...new Set([...CATEGORIES, ...S.resources.map((r) => r.category).filter(Boolean)])].map((c) => `<option value="${esc(c)}">`).join("");
+    if (!S.isEditor) return;
+    const rows = $("edit-rows");
+    rows.innerHTML = S.resources.length ? "" : `<p class="hint" style="margin:0">Nothing here yet.</p>`;
+    for (const r of S.resources) {
+      const row = document.createElement("div");
+      row.className = "erow";
+      row.innerHTML = `
+        <input aria-label="Title" data-k="title" value="${esc(r.title)}">
+        <input aria-label="Category" data-k="category" list="cat-list" value="${esc(r.category || "")}">
+        <div class="actions">
+          <button class="btn" type="button" data-a="save">Save</button>
+          ${r.kind === "link" ? "" : `<button class="btn" type="button" data-a="replace">Replace file</button>`}
+          <button class="btn danger" type="button" data-a="del">Delete</button>
+        </div>
+        <input class="desc" aria-label="Description" data-k="description" value="${esc(r.description || "")}" placeholder="Description">
+        <div class="sub">${kindOf(r)} · ${esc(r.file_name || r.url || "")} <span data-s></span></div>`;
+      const status = row.querySelector("[data-s]");
+      const say = (s) => { status.textContent = s ? "· " + s : ""; };
+      const val = (k) => row.querySelector(`[data-k="${k}"]`).value.trim();
+      row.querySelector('[data-a="save"]').onclick = async () => {
+        const { error } = await sb.from("resources").update({ title: val("title") || r.title, category: val("category") || "Uncategorized", description: val("description") }).eq("id", r.id);
+        if (error) return say(error.message);
+        say("Saved"); Object.assign(r, { title: val("title") || r.title, category: val("category") || "Uncategorized", description: val("description") });
+        renderLibrary(); renderScope();
+      };
+      const del = row.querySelector('[data-a="del"]');
+      del.onclick = async () => {
+        if (!del.classList.contains("armed")) {
+          del.classList.add("armed"); del.textContent = "Confirm delete";
+          setTimeout(() => { del.classList.remove("armed"); del.textContent = "Delete"; }, 4000);
+          return;
+        }
+        del.disabled = true; say("Deleting…");
+        if (r.storage_path) await sb.storage.from(BUCKET).remove([r.storage_path]);
+        const { error } = await sb.from("resources").delete().eq("id", r.id);
+        if (error) { del.disabled = false; return say(error.message); }
+        loadResources();
+      };
+      const rep = row.querySelector('[data-a="replace"]');
+      if (rep) rep.onclick = () => {
+        const inp = document.createElement("input");
+        inp.type = "file";
+        inp.onchange = async () => {
+          const f = inp.files[0]; if (!f) return;
+          try {
+            const up = await uploadFile(f, say);
+            say("Indexing…");
+            await sb.from("resource_pages").delete().eq("resource_id", r.id);
+            await writePages(r.id, up.pages);
+            const { error } = await sb.from("resources").update({
+              storage_path: up.path, content_type: up.type, size_bytes: f.size, file_name: f.name,
+              page_count: up.numPages, has_text: up.hasText, updated_at: new Date().toISOString()
+            }).eq("id", r.id);
+            if (error) throw error;
+            if (r.storage_path) await sb.storage.from(BUCKET).remove([r.storage_path]);
+            say("Replaced");
+            loadResources();
+          } catch (e) { say(e.message || "Replace failed"); }
+        };
+        inp.click();
+      };
+      rows.appendChild(row);
+    }
+  }
+
+  function renderPeople() {
+    const box = $("people");
+    if (!box) return;
+    if (!S.people.length) { box.innerHTML = `<p class="hint" style="margin:0">No one yet.</p>`; return; }
+    box.innerHTML = `<table class="team"><thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Role</th></tr></thead><tbody>${S.people.map((p) => `
+      <tr><td>${esc(p.full_name || "—")}</td><td>${esc(p.email || "")}</td><td class="num">${fmtDate(p.created_at)}</td>
+      <td><select data-id="${esc(p.id)}" aria-label="Role for ${esc(p.full_name || p.email)}" ${p.id === S.user.id ? "disabled title=\"You can't change your own role\"" : ""}>
+        <option value="vaccinator" ${p.role === "vaccinator" ? "selected" : ""}>Vaccinator</option>
+        <option value="editor" ${p.role === "editor" ? "selected" : ""}>Editor</option></select></td></tr>`).join("")}</tbody></table>`;
+    box.querySelectorAll("select").forEach((sel) => sel.onchange = async () => {
+      const { error } = await sb.from("profiles").update({ role: sel.value }).eq("id", sel.dataset.id);
+      if (error) flash("The role couldn't be changed: " + error.message);
+      loadPeople();
+    });
+  }
+
+  /* ---------- chat ---------- */
+  function mdToHtml(src) {
+    const cite = (s) => s.replace(/\[\[doc:([0-9a-f-]{36})(?:\|p(\d+))?\]\]/g, (m, id, pg) => {
+      const r = byId(id);
+      if (!r) return "";
+      const label = (r.title.length > 28 ? r.title.slice(0, 26) + "…" : r.title) + (pg ? " · p." + pg : "");
+      return `<a class="cite" href="${esc(hrefOf(r, pg))}" target="_blank" rel="noopener" title="${esc(r.title)}">${esc(label)}</a>`;
+    });
+    const inline = (s) => cite(esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"));
+    const out = []; let list = null;
+    for (const raw of src.split("\n")) {
+      const line = raw.trimEnd();
+      const ul = line.match(/^\s*[-*•]\s+(.*)/), ol = line.match(/^\s*\d+[.)]\s+(.*)/), h = line.match(/^#{1,4}\s+(.*)/);
+      if (ul || ol) {
+        const tag = ul ? "ul" : "ol";
+        if (list !== tag) { if (list) out.push(`</${list}>`); out.push(`<${tag}>`); list = tag; }
+        out.push(`<li>${inline((ul || ol)[1])}</li>`);
+        continue;
+      }
+      if (list) { out.push(`</${list}>`); list = null; }
+      if (h) out.push(`<h4>${inline(h[1])}</h4>`);
+      else if (line.trim()) out.push(`<p>${inline(line)}</p>`);
+    }
+    if (list) out.push(`</${list}>`);
+    return out.join("");
+  }
+  function addMsg(role, text) {
+    const el = document.createElement("div");
+    el.className = "msg " + (role === "user" ? "user" : "bot");
+    if (role === "user") el.textContent = text; else el.innerHTML = mdToHtml(text);
+    $("log").appendChild(el);
+    return el;
+  }
+  function renderChat() {
+    $("log").innerHTML = "";
+    for (const t of S.turns) addMsg(t.role, t.content);
+    const sug = $("suggest");
+    sug.innerHTML = ""; sug.hidden = S.turns.length > 0;
+    for (const s of SUGGESTIONS) {
+      const b = document.createElement("button");
+      b.type = "button"; b.textContent = s;
+      b.onclick = () => { $("ask-input").value = s; send(); };
+      sug.appendChild(b);
+    }
+  }
+  function renderScope() {
+    const sel = $("scope-sel"), cur = sel.value;
+    sel.innerHTML = `<option value="">All documents</option>` + S.resources.filter((r) => r.has_text).map((r) => `<option value="${esc(r.id)}">${esc(r.title)}</option>`).join("");
+    sel.value = byId(cur) ? cur : "";
+  }
+  function autosize() { const t = $("ask-input"); t.style.height = "auto"; t.style.height = Math.min(160, t.scrollHeight) + "px"; }
+  $("ask-input").addEventListener("input", autosize);
+  $("ask-input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  $("ask-form").onsubmit = (e) => { e.preventDefault(); send(); };
+  $("new-chat").onclick = () => { S.turns = []; store.set("vh-chat", []); renderChat(); };
+
+  let busy = false;
+  async function send() {
+    const input = $("ask-input");
+    const text = input.value.trim();
+    if (!text || busy) return;
+    busy = true; $("ask-btn").disabled = true;
+    input.value = ""; autosize();
+    $("suggest").hidden = true;
+    S.turns.push({ role: "user", content: text });
+    addMsg("user", text);
+    const bubble = addMsg("bot", "");
+    bubble.innerHTML = `<span class="status">Searching the documents…</span>`;
+    bubble.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    try {
+      await signUrls(false);
+      const { data, error } = await sb.functions.invoke("ask", { body: { messages: S.turns.slice(-12), scope: $("scope-sel").value || null } });
+      if (error) {
+        let msg = "The assistant couldn't be reached. Try again in a moment.";
+        try { const body = await error.context.json(); if (body?.error) msg = body.error; } catch {}
+        throw new Error(msg);
+      }
+      if (data?.error) throw new Error(data.error);
+      bubble.innerHTML = mdToHtml(data.text);
+      S.turns.push({ role: "assistant", content: data.text });
+      store.set("vh-chat", S.turns.slice(-20));
+    } catch (e) {
+      S.turns.pop();
+      bubble.innerHTML = `<p class="err">${esc(e.message)}</p>`;
+      input.value = text; autosize();
+    } finally {
+      busy = false; $("ask-btn").disabled = false;
+    }
+  }
+
+  /* ---------- training ---------- */
+  const KINDS = { read: "Read", watch: "Watch", task: "Practice task", quiz: "Quiz" };
+  const rid = () => Math.random().toString(36).slice(2, 10);
+  const skey = (m, s) => m.id + ":" + s.id;
+  const isDone = (m, s) => !!(T.progress.done || {})[skey(m, s)];
+  const stats = (m) => {
+    const steps = m.steps || [];
+    const d = steps.filter((s) => isDone(m, s)).length;
+    return { n: steps.length, d, complete: steps.length > 0 && d === steps.length, started: d > 0 };
+  };
+  const locked = (i) => i > 0 && !stats(T.modules[i - 1]).complete && !S.isEditor;
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function renderTraining() {
+    if (T.editing) return;
+    const root = $("training-root");
+    if (!T.loaded) { root.innerHTML = `<div class="empty"><p>Loading training…</p></div>`; return; }
+    const m = T.open && T.modules.find((x) => x.id === T.open);
+    if (m) renderModule(root, m); else { T.open = null; renderModuleList(root); }
+  }
+
+  function renderModuleList(root) {
+    const total = T.modules.length;
+    const doneCount = T.modules.filter((m) => stats(m).complete).length;
+    root.innerHTML = `
+      <div class="tr-head">
+        <div><h2>Training</h2><p>Work through each module in order. Steps unlock one at a time, and your progress is saved to your account.</p></div>
+        ${S.isEditor ? `<button class="btn primary" type="button" data-new>New module</button>` : ""}
+      </div>
+      ${total ? `<p class="trsum">${doneCount} of ${total} module${total === 1 ? "" : "s"} complete</p>` : ""}
+      <div class="mods"></div>
+      ${S.isEditor ? `<div class="panel" style="margin-top:28px"><h2>Team progress</h2><p class="hint">Everyone who has completed at least one step. Only editors see this.</p><div class="tablewrap" id="team"></div></div>` : ""}`;
+    const nb = root.querySelector("[data-new]");
+    if (nb) nb.onclick = () => startEdit(null);
+    const grid = root.querySelector(".mods");
+    if (!total) {
+      grid.outerHTML = `<div class="empty"><h3>No training modules yet</h3><p>${S.isEditor ? "Create the first module with New module. Link steps to documents in the Library, add practice tasks and quiz questions." : "Modules will appear here once your supervisor sets them up."}</p></div>`;
+    }
+    T.modules.forEach((m, i) => {
+      const st = stats(m), lk = locked(i);
+      const card = document.createElement("article");
+      card.className = "mod" + (lk ? " locked" : " open");
+      const pill = st.complete ? `<span class="pill done">Completed</span>` : lk ? `<span class="pill">Locked</span>` : st.started ? `<span class="pill prog">In progress</span>` : `<span class="pill">Not started</span>`;
+      const doneAt = (T.progress.modules_done || {})[m.id];
+      card.innerHTML = `
+        <div class="row"><span class="eyebrow">Module ${pad(i + 1)}</span>${pill}</div>
+        <h3>${esc(m.title)}</h3>
+        ${m.description ? `<p>${esc(m.description)}</p>` : ""}
+        <div class="foot">
+          <div class="bar"><i style="width:${st.n ? (st.d / st.n) * 100 : 0}%"></i></div>
+          <div class="row"><span class="small">${st.d} of ${st.n} steps${st.complete && doneAt ? " · " + fmtDate(doneAt) : ""}</span>
+          ${lk ? `<span class="small">Finish module ${pad(i)} first</span>` : ""}
+          ${S.isEditor ? `<span class="actions"><button class="iconbtn" type="button" data-up aria-label="Move up" ${i === 0 ? "disabled" : ""}>↑</button><button class="iconbtn" type="button" data-down aria-label="Move down" ${i === total - 1 ? "disabled" : ""}>↓</button><button class="iconbtn" type="button" data-edit>Edit</button></span>` : ""}</div>
+        </div>`;
+      if (!lk) {
+        card.tabIndex = 0;
+        const go = () => { T.open = m.id; renderTraining(); window.scrollTo({ top: 0 }); };
+        card.onclick = (e) => { if (!e.target.closest("button")) go(); };
+        card.onkeydown = (e) => { if (e.key === "Enter" && e.target === card) go(); };
+      }
+      if (S.isEditor) {
+        card.querySelector("[data-edit]").onclick = () => startEdit(m);
+        card.querySelector("[data-up]").onclick = () => swapOrder(i, i - 1);
+        card.querySelector("[data-down]").onclick = () => swapOrder(i, i + 1);
+      }
+      grid.appendChild(card);
+    });
+    if (S.isEditor) renderTeam();
+  }
+
+  async function swapOrder(a, b) {
+    const A = T.modules[a], B = T.modules[b];
+    if (!A || !B) return;
+    await sb.from("modules").update({ sort_order: B.sort_order }).eq("id", A.id);
+    await sb.from("modules").update({ sort_order: A.sort_order }).eq("id", B.id);
+    loadModules();
+  }
+
+  function renderModule(root, m) {
+    const i = T.modules.indexOf(m);
+    if (locked(i)) { T.open = null; return renderModuleList(root); }
+    const st = stats(m), steps = m.steps || [];
+    const cur = steps.findIndex((s) => !isDone(m, s));
+    const next = T.modules[i + 1];
+    root.innerHTML = `
+      <button class="btn" type="button" data-back>← All modules</button>
+      <div class="tr-head" style="margin-top:18px">
+        <div><span class="eyebrow">Module ${pad(i + 1)}</span><h2>${esc(m.title)}</h2>${m.description ? `<p>${esc(m.description)}</p>` : ""}</div>
+        ${S.isEditor ? `<button class="btn" type="button" data-edit>Edit module</button>` : ""}
+      </div>
+      <div style="max-width:780px"><div class="bar"><i style="width:${st.n ? (st.d / st.n) * 100 : 0}%"></i></div>
+      <p class="small" style="margin:6px 0 0">${st.d} of ${st.n} steps complete</p></div>
+      ${st.complete ? `<div class="complete-card"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="var(--accent)"/><path d="M12 20.5l5.5 5.5L28.5 15" fill="none" stroke="var(--accent-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong>Module complete</strong><span>Finished ${fmtDate((T.progress.modules_done || {})[m.id])}. ${next ? "The next module is now unlocked." : "You've completed every module."}</span></div>${next ? `<button class="btn primary" type="button" data-next style="margin-left:auto">Next module</button>` : ""}</div>` : ""}
+      <ol class="track"></ol>`;
+    root.querySelector("[data-back]").onclick = () => { T.open = null; renderTraining(); };
+    const eb = root.querySelector("[data-edit]"); if (eb) eb.onclick = () => startEdit(m);
+    const nx = root.querySelector("[data-next]"); if (nx) nx.onclick = () => { T.open = next.id; renderTraining(); window.scrollTo({ top: 0 }); };
+    const track = root.querySelector(".track");
+    steps.forEach((s, j) => {
+      const done = isDone(m, s), current = j === cur;
+      const li = document.createElement("li");
+      li.className = "step " + (done ? "done" : current ? "current" : "locked");
+      const r = s.resourceId ? byId(s.resourceId) : null;
+      li.innerHTML = `
+        <div class="dot" aria-hidden="true">${done ? "✓" : j + 1}</div>
+        <div style="min-width:0"><div class="shead"><h3>${esc(s.title)}</h3><span class="kind">${KINDS[s.kind] || "Step"}${done ? " · done " + fmtDate(T.progress.done[skey(m, s)]) : ""}</span></div></div>`;
+      const col = li.lastElementChild;
+      if (done && r) col.appendChild(openLink(r, null, "Review: " + r.title, "small"));
+      if (current) col.appendChild(stepBody(m, s, r));
+      track.appendChild(li);
+    });
+    if (!steps.length) track.outerHTML = `<div class="empty" style="margin-top:20px"><p>This module has no steps yet.</p></div>`;
+  }
+
+  function stepBody(m, s, r) {
+    const box = document.createElement("div");
+    box.className = "sbody";
+    box.innerHTML = `${s.instructions ? `<p class="instr">${esc(s.instructions)}</p>` : ""}<div data-res></div><div data-act></div>`;
+    if (s.resourceId) {
+      if (r) box.querySelector("[data-res]").appendChild(openLink(r, null, (s.kind === "watch" ? "Watch: " : "Open: ") + r.title));
+      else box.querySelector("[data-res]").innerHTML = `<p class="small">The linked document was removed from the Library.</p>`;
+    }
+    const act = box.querySelector("[data-act]");
+    const markBtn = (enabled) => `<button class="btn primary" type="button" data-mark ${enabled ? "" : "disabled"}>Mark as done</button>`;
+    if (s.kind === "quiz") {
+      act.innerHTML = `
+        <p style="margin:0 0 10px;font-weight:600">${esc(s.question)}</p>
+        <div class="opts">${(s.options || []).map((o, k) => `<label><input type="radio" name="q-${esc(s.id)}" value="${k}"><span>${esc(o)}</span></label>`).join("")}</div>
+        <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn primary" type="button" data-check>Check answer</button></div>
+        <p class="feedback" data-fb hidden></p>`;
+      act.querySelector("[data-check]").onclick = async () => {
+        const sel = act.querySelector("input:checked");
+        const fb = act.querySelector("[data-fb]");
+        if (!sel) { fb.hidden = false; fb.textContent = "Choose an answer first."; return; }
+        const { data: correct, error } = await sb.rpc("check_quiz_answer", { module_id: m.id, step_id: s.id, choice: Number(sel.value) });
+        if (error) { fb.hidden = false; fb.textContent = "Your answer couldn't be checked. Try again."; return; }
+        if (correct) completeStep(m, s);
+        else { fb.hidden = false; fb.textContent = r ? `Not quite. Review “${r.title}” and try again.` : "Not quite. Read the question again and try another answer."; }
+      };
+    } else if (s.kind === "task") {
+      act.innerHTML = `<label class="check"><input type="checkbox" data-cb> I've completed this task</label><div class="actions" style="justify-content:flex-start;margin-top:12px">${markBtn(false)}</div>`;
+      act.querySelector("[data-cb]").onchange = (e) => { act.querySelector("[data-mark]").disabled = !e.target.checked; };
+    } else {
+      const needsOpen = !!r;
+      act.innerHTML = `<div class="actions" style="justify-content:flex-start">${markBtn(!needsOpen)}</div>${needsOpen ? `<p class="small" style="margin:8px 0 0">Open the ${s.kind === "watch" ? "video" : "document"} to unlock this step.</p>` : ""}`;
+      const res = box.querySelector("[data-res] a");
+      if (res) res.addEventListener("click", () => { act.querySelector("[data-mark]").disabled = false; act.querySelector("p")?.remove(); });
+    }
+    const mb = act.querySelector("[data-mark]");
+    if (mb) mb.onclick = () => { mb.disabled = true; completeStep(m, s); };
+    return box;
+  }
+
+  async function completeStep(m, s) {
+    const now = new Date().toISOString();
+    const done = { ...(T.progress.done || {}), [skey(m, s)]: now };
+    const modules_done = { ...(T.progress.modules_done || {}) };
+    if ((m.steps || []).every((x) => done[skey(m, x)])) modules_done[m.id] = now;
+    const row = { user_id: S.user.id, done, modules_done, updated_at: now };
+    const { error } = await sb.from("progress").upsert(row);
+    if (error) flash("Your progress couldn't be saved. Check your connection and try again.");
+    else T.progress = row;
+    renderTraining();
+    if (S.isEditor) loadTeam();
+  }
+
+  function renderTeam() {
+    const box = $("team");
+    if (!box) return;
+    const people = T.all.filter((p) => Object.keys(p.done || {}).length);
+    if (!people.length) { box.innerHTML = `<p class="hint" style="margin:0">No one has started yet.</p>`; return; }
+    const names = Object.fromEntries(S.people.map((p) => [p.id, p.full_name || p.email]));
+    const head = `<tr><th>Vaccinator</th>${T.modules.map((m, i) => `<th title="${esc(m.title)}">M${pad(i + 1)}</th>`).join("")}<th>Modules done</th><th>Last activity</th></tr>`;
+    const rows = people.map((p) => {
+      const cells = T.modules.map((m) => {
+        const n = (m.steps || []).length, d = (m.steps || []).filter((s) => (p.done || {})[skey(m, s)]).length;
+        return n && d === n ? `<td class="num yes">✓</td>` : `<td class="num">${d}/${n}</td>`;
+      }).join("");
+      const md = T.modules.filter((m) => (p.modules_done || {})[m.id]).length;
+      return `<tr><td>${esc(names[p.user_id] || "Someone")}</td>${cells}<td class="num">${md} of ${T.modules.length}</td><td class="num">${fmtDate(p.updated_at)}</td></tr>`;
+    }).join("");
+    box.innerHTML = `<table class="team"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  }
+
+  /* module editor */
+  async function startEdit(m) {
+    let answers = {};
+    if (m) {
+      const { data } = await sb.from("quiz_answers").select("step_id,answer").eq("module_id", m.id);
+      for (const a of data || []) answers[a.step_id] = a.answer;
+    }
+    T.editing = m
+      ? { id: m.id, title: m.title || "", description: m.description || "", sort_order: m.sort_order,
+          steps: (m.steps || []).map((s) => ({ ...s, _opts: (s.options || []).map((o, k) => (k === answers[s.id] ? "*" : "") + o).join("\n") })) }
+      : { id: null, title: "", description: "", steps: [{ id: rid(), kind: "read", title: "", instructions: "", _opts: "" }] };
+    renderEditor();
+    window.scrollTo({ top: 0 });
+  }
+  function renderEditor() {
+    const m = T.editing, root = $("training-root");
+    const resOpts = (sel) => `<option value="">None</option>` + S.resources.map((r) => `<option value="${esc(r.id)}" ${r.id === sel ? "selected" : ""}>${esc(r.title)} (${kindOf(r)})</option>`).join("");
+    root.innerHTML = `
+      <button class="btn" type="button" data-cancel>← Back to modules</button>
+      <div class="panel" style="margin-top:18px;max-width:880px">
+        <h2>${m.id ? "Edit module" : "New module"}</h2>
+        <label class="field" for="me-title">Module title<input id="me-title" value="${esc(m.title)}" placeholder="e.g. Cold chain basics"></label>
+        <label class="field" for="me-desc">What vaccinators will learn<textarea id="me-desc" rows="2">${esc(m.description)}</textarea></label>
+        <h3 style="font-size:16px;margin-top:6px">Steps <span class="small">completed in this order</span></h3>
+        <div class="sedits" id="me-steps"></div>
+        <div class="actions" style="justify-content:flex-start">
+          <button class="btn" type="button" data-add="read">+ Read</button>
+          <button class="btn" type="button" data-add="watch">+ Watch</button>
+          <button class="btn" type="button" data-add="task">+ Practice task</button>
+          <button class="btn" type="button" data-add="quiz">+ Quiz</button>
+        </div>
+        <p class="feedback" id="me-err" hidden></p>
+        <div class="actions" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:14px">
+          ${m.id ? `<button class="btn danger" type="button" data-del>Delete module</button>` : "<span></span>"}
+          <span class="actions"><button class="btn" type="button" data-cancel>Cancel</button><button class="btn primary" type="button" data-save>Save module</button></span>
+        </div>
+      </div>`;
+    $("me-title").oninput = (e) => { m.title = e.target.value; };
+    $("me-desc").oninput = (e) => { m.description = e.target.value; };
+    const list = $("me-steps");
+    m.steps.forEach((s, i) => {
+      const el = document.createElement("div");
+      el.className = "sedit";
+      el.innerHTML = `
+        <div class="shd"><strong class="small">Step ${i + 1}</strong>
+          <span class="actions"><button class="iconbtn" type="button" data-mv="-1" aria-label="Move up" ${i ? "" : "disabled"}>↑</button><button class="iconbtn" type="button" data-mv="1" aria-label="Move down" ${i < m.steps.length - 1 ? "" : "disabled"}>↓</button><button class="iconbtn" type="button" data-rm>Remove</button></span></div>
+        <label class="field" for="sk-${s.id}">Type<select id="sk-${s.id}" data-f="kind">${Object.entries(KINDS).map(([k, v]) => `<option value="${k}" ${k === s.kind ? "selected" : ""}>${v}</option>`).join("")}</select></label>
+        <label class="field" for="st-${s.id}">Step title<input id="st-${s.id}" data-f="title" value="${esc(s.title)}"></label>
+        <label class="field full" for="si-${s.id}">Instructions (optional)<textarea id="si-${s.id}" data-f="instructions" rows="2">${esc(s.instructions || "")}</textarea></label>
+        ${s.kind !== "task" ? `<label class="field full" for="sr-${s.id}">${s.kind === "quiz" ? "Document to review if wrong (optional)" : "Linked document or video"}<select id="sr-${s.id}" data-f="resourceId">${resOpts(s.resourceId)}</select></label>` : ""}
+        ${s.kind === "quiz" ? `
+          <label class="field full" for="sq-${s.id}">Question<input id="sq-${s.id}" data-f="question" value="${esc(s.question || "")}"></label>
+          <label class="field full" for="so-${s.id}">Answer options, one per line. Put * before the correct one.<textarea id="so-${s.id}" data-f="_opts" rows="4" placeholder="*Between +2 °C and +8 °C&#10;Below 0 °C&#10;Room temperature">${esc(s._opts || "")}</textarea></label>` : ""}`;
+      el.querySelectorAll("[data-f]").forEach((inp) => {
+        inp.addEventListener(inp.tagName === "SELECT" ? "change" : "input", () => {
+          s[inp.dataset.f] = inp.value;
+          if (inp.dataset.f === "kind") renderEditor();
+        });
+      });
+      el.querySelectorAll("[data-mv]").forEach((b) => b.onclick = () => {
+        const j = i + Number(b.dataset.mv);
+        [m.steps[i], m.steps[j]] = [m.steps[j], m.steps[i]];
+        renderEditor();
+      });
+      el.querySelector("[data-rm]").onclick = () => { m.steps.splice(i, 1); renderEditor(); };
+      list.appendChild(el);
+    });
+    root.querySelectorAll("[data-add]").forEach((b) => b.onclick = () => {
+      m.steps.push({ id: rid(), kind: b.dataset.add, title: "", instructions: "", _opts: "" });
+      renderEditor();
+    });
+    root.querySelectorAll("[data-cancel]").forEach((b) => b.onclick = () => { T.editing = null; renderTraining(); });
+    root.querySelector("[data-save]").onclick = saveModule;
+    const del = root.querySelector("[data-del]");
+    if (del) del.onclick = async () => {
+      if (!del.classList.contains("armed")) {
+        del.classList.add("armed"); del.textContent = "Confirm: delete module";
+        setTimeout(() => { del.classList.remove("armed"); del.textContent = "Delete module"; }, 4000);
+        return;
+      }
+      del.disabled = true;
+      await sb.from("modules").delete().eq("id", m.id);
+      T.editing = null; T.open = null;
+      loadModules();
+    };
+  }
+  async function saveModule() {
+    const m = T.editing, err = $("me-err");
+    const fail = (msg) => { err.hidden = false; err.textContent = msg; };
+    if (!m.title.trim()) return fail("Give the module a title.");
+    if (!m.steps.length) return fail("Add at least one step.");
+    const steps = [], answers = [];
+    for (const [i, s] of m.steps.entries()) {
+      if (!s.title.trim()) return fail(`Step ${i + 1} needs a title.`);
+      const out = { id: s.id, kind: s.kind, title: s.title.trim(), instructions: (s.instructions || "").trim() };
+      if (s.resourceId && s.kind !== "task") out.resourceId = s.resourceId;
+      if (s.kind === "quiz") {
+        const lines = (s._opts || "").split("\n").map((l) => l.trim()).filter(Boolean);
+        const correct = lines.map((l, k) => l.startsWith("*") ? k : -1).filter((k) => k >= 0);
+        if (!(s.question || "").trim()) return fail(`Step ${i + 1}: write the quiz question.`);
+        if (lines.length < 2) return fail(`Step ${i + 1}: give at least two answer options.`);
+        if (correct.length !== 1) return fail(`Step ${i + 1}: mark exactly one option with * as correct.`);
+        out.question = s.question.trim();
+        out.options = lines.map((l) => l.replace(/^\*\s*/, ""));
+        answers.push({ step_id: s.id, answer: correct[0] });
+      }
+      steps.push(out);
+    }
+    const body = { title: m.title.trim(), description: m.description.trim(), steps, updated_at: new Date().toISOString() };
+    let id = m.id, error;
+    if (id) ({ error } = await sb.from("modules").update(body).eq("id", id));
+    else {
+      body.sort_order = T.modules.reduce((a, x) => Math.max(a, x.sort_order || 0), 0) + 1;
+      const res = await sb.from("modules").insert(body).select("id").single();
+      error = res.error; id = res.data?.id;
+    }
+    if (!error) {
+      // Correct answers live in a separate table that only editors can read.
+      await sb.from("quiz_answers").delete().eq("module_id", id);
+      if (answers.length) ({ error } = await sb.from("quiz_answers").insert(answers.map((a) => ({ ...a, module_id: id }))));
+    }
+    if (error) return fail("The module couldn't be saved: " + error.message);
+    T.editing = null;
+    loadModules();
+  }
+})();
+</script>
+</body>
+</html>
